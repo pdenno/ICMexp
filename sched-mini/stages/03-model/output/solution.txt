@@ -1,0 +1,18 @@
+order  product        stand  build starts  test starts   test ends     on the dock   promised      late
+--------------------------------------------------------------------------------------------------------------
+L1     R600a_LBP      2      Mon 06:00     Wed 06:00     Wed 18:00     Wed 21:30     Wed 16:00     5.50 h late
+L2     R600a_MBP      2      Mon 16:30     Thu 06:00     Thu 18:00     Thu 21:30     Thu 16:00     5.50 h late
+L3     R134a_legacy   1      Wed 16:30     Mon+1 06:00   Mon+1 20:00   Tue+1 07:30   Thu 16:00     39.50 h late
+L4     R600a_LBP      2      Tue 11:00     Fri 06:00     Fri 18:00     Fri 21:30     Fri 16:00     5.50 h late
+L5     R134a_legacy   1      Wed 06:00     Fri 06:00     Fri 20:00     Mon+1 07:30   Fri 16:00     7.50 h late
+L6     R600a_MBP      2      Thu 14:45     Mon+1 06:00   Mon+1 14:00   Mon+1 17:30   Mon+1 16:00   1.50 h late
+
+total tardiness (working hours): 65
+weighted tardiness             : 65
+total changeover time          : 4.75
+
+Times are wall-clock; the plant works 06:00-22:00 Mon-Fri and nothing moves off-shift.
+Lateness is in WORKING hours: 16 h late = one working day late.
+----------
+==========
+% [objective > 17438]

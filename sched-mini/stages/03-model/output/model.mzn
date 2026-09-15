@@ -39,6 +39,8 @@ array[RESOURCE, PRODUCT, PRODUCT] of int: setup;   % qh, from-product to-product
 int: leak_lag;                             % braze finish -> vac start, no resource
 int: pack_lag;                             % run-test finish -> on the dock
 int: day_len;                              % qh in one working day
+int: qh_per_hour;                          % time-unit granularity
+int: shift_start_hour;                     % clock hour the working day opens
 int: horizon;                              % qh
 
 array[int] of string: day_name;
@@ -185,11 +187,14 @@ function string: padr(string: s, int: n) =
 % working-axis qh -> wall-clock, given the plant works 06:00-22:00 Mon-Fri
 function string: wc(int: q) =
   padr(day_name[q div day_len] ++ " " ++
-       pad2(6 + (q mod day_len) div 4) ++ ":" ++ pad2(((q mod day_len) mod 4) * 15), 12);
+       pad2(shift_start_hour + (q mod day_len) div qh_per_hour) ++ ":" ++
+       pad2(((q mod day_len) mod qh_per_hour) * (60 div qh_per_hour)), 12);
 
 % qh -> hours, as a decimal
 function string: hrs(int: q) =
-  show(q div 4) ++ (if q mod 4 = 0 then "" else "." ++ show((q mod 4) * 25) endif);
+  show(q div qh_per_hour) ++
+  (if q mod qh_per_hour = 0 then ""
+   else "." ++ show((q mod qh_per_hour) * (100 div qh_per_hour)) endif);
 
 output
   [ "order  product        stand  build starts  test starts   test ends     on the dock   promised      late\n",

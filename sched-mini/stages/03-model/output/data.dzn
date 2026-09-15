@@ -63,7 +63,9 @@ leak_lag = 24;    % 6 h, leak test between braze and vac/oil fill
 pack_lag = 14;    % 3.5 h, run-test sign-off to palletized on the dock
 
 % --- calendar and bounds
-day_len = 64;     % 16 working hours per day
+day_len = 64;           % 16 working hours per day
+qh_per_hour = 4;        % quarter-hour time unit
+shift_start_hour = 6;   % first shift opens at 06:00
 horizon = 1280;   % 320 working hours
 
 % one label per working day in the horizon (1280 qh / 64 = 20 working days, plus the horizon endpoint itself)
