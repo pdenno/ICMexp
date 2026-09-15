@@ -1,0 +1,75 @@
+% sched-mini — stage 03 data, from stages/02-specify/output/spec.md §1.
+% All times in quarter-hours (qh) on the working-hour axis: 4 qh = 1 hour,
+% 64 qh = one 16-hour working day (06:00-22:00). Edit this file to re-run the
+% model next week with new orders.
+
+PRODUCT  = { R600a_LBP, R600a_MBP, R134a_legacy };
+ORDER    = { L1, L2, L3, L4, L5, L6 };
+RESOURCE = { assembly_line, braze_cell, vac_oil_station, run_test_stands };
+STEP     = { build, braze, vac_oil_fill, run_test };
+
+res = [ assembly_line, braze_cell, vac_oil_station, run_test_stands ];
+cap = [ 1, 1, 1, 2 ];
+
+build_step = build;
+braze_step = braze;
+vac_step   = vac_oil_fill;
+test_step  = run_test;
+
+% --- products of each lot, and lot sizes
+prod = [ R600a_LBP, R600a_MBP, R134a_legacy, R600a_LBP, R134a_legacy, R600a_MBP ];
+qty  = [ 300, 300, 300, 300, 300, 200 ];
+lot_base = 300;
+
+% --- station time for a 300-unit lot, qh
+%                              build  braze  vac   test
+dur_per_lot = array2d(PRODUCT, STEP,
+  [ 42,    28,    32,   48      % R600a_LBP    (10.5, 7, 8, 12 h)
+  , 42,    28,    32,   48      % R600a_MBP    (10.5, 7, 8, 12 h)
+  , 42,    28,    32,   56      % R134a_legacy (10.5, 7, 8, 14 h)
+  ]);
+
+% --- the week's lots
+%          L1  L2  L3  L4  L5  L6
+release = [  0,  0,  0,  0, 64,  0 ];    % L5: parts land Tue 06:00
+due     = [168,232,232,296,296,360 ];    % Wed/Thu/Thu/Fri/Fri/next-Mon 16:00
+weight  = [  1,  1,  1,  1,  1,  1 ];    % see spec §6 q3: ratios not yet given
+                                         % L3 is escalated, L6 is filler
+
+% --- changeover, qh, from the product leaving to the product arriving.
+% 0 between two lots of the same product; small within R600a; large across
+% the refrigerant boundary.
+setup = array3d(RESOURCE, PRODUCT, PRODUCT,
+  [ % assembly_line          to: LBP  MBP  R134a
+      0, 0, 2                % from R600a_LBP
+    , 0, 0, 2                % from R600a_MBP
+    , 2, 2, 0                % from R134a_legacy
+  , % braze_cell
+      0, 1, 3
+    , 1, 0, 3
+    , 3, 3, 0
+  , % vac_oil_station
+      0, 0, 2
+    , 0, 0, 2
+    , 2, 2, 0
+  , % run_test_stands
+      0, 1, 4
+    , 1, 0, 4
+    , 4, 4, 0
+  ]);
+
+% --- lags that occupy no station
+leak_lag = 24;    % 6 h, leak test between braze and vac/oil fill
+pack_lag = 14;    % 3.5 h, run-test sign-off to palletized on the dock
+
+% --- calendar and bounds
+day_len = 64;     % 16 working hours per day
+horizon = 1280;   % 320 working hours
+
+% one label per working day in the horizon (1280 qh / 64 = 20 working days, plus the horizon endpoint itself)
+day_name = array1d(0..20,
+  [ "Mon",    "Tue",    "Wed",    "Thu",    "Fri",
+    "Mon+1",  "Tue+1",  "Wed+1",  "Thu+1",  "Fri+1",
+    "Mon+2",  "Tue+2",  "Wed+2",  "Thu+2",  "Fri+2",
+    "Mon+3",  "Tue+3",  "Wed+3",  "Thu+3",  "Fri+3",
+    "Mon+4" ]);

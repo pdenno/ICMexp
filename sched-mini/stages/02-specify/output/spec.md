@@ -229,14 +229,17 @@ Permutation is not assumed — orders may pass each other between resources, per
 
 ## 6. Open questions for the expert
 
-1. **Sequence-dependent setup departs from the standard formulation.**
-   `modeling-choices.md` §flow-shop says setup that is not product-independent
-   should be raised as an open question rather than modeled. It is modeled here,
-   because the expert's second-ranked goal is exactly "don't pay changeovers you
-   didn't need," and a model blind to which product ran last cannot express it.
-   The cost is three extra decision variables per resource pair and a larger
-   search. If the human prefers the reference's conservative route, sentences 9
-   and 15 come out and the model reduces to the textbook flow shop.
+*(Question 1 resolved by the human on 2026-09-15; kept in place, marked, so the
+decision and its rationale stay traceable.)*
+
+1. **Sequence-dependent setup — RESOLVED by the human, 2026-09-15: answer A,
+   model it explicitly.** `modeling-choices.md` §flow-shop directs
+   product-dependent setup to be raised as an open question rather than modeled.
+   It is modeled here, because the expert's second-ranked goal is exactly "don't
+   pay changeovers you didn't need," and a model blind to which product ran last
+   cannot express it. Action sentences 9 and 15 stand, and the model carries the
+   stand-assignment and ordering variables of §2. The departure from the
+   reference is deliberate and recorded; no longer open.
 
 2. **Duration point values.** Midpoint-then-round-up is this stage's choice, not
    the expert's. Build 10.5, braze 7, run-test 12 / 14. The expert should confirm,
