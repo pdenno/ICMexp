@@ -25,6 +25,13 @@ the human.
 
 ## 2. Surrogate expert brief (craft brewery)
 
+> **Not used in run 1.** The run played a refrigerator-compressor plant
+> instead, with answers drawn from an earlier Sched6 project
+> (`../data/s6-interviews/refrigerator-compressors-report.md`) and relayed
+> by the human. The two withheld facts below were therefore never injected;
+> the backward move predicted in P4 arose from stage 3's own gate instead.
+> The brief is kept for a future run.
+
 Answer from this; volunteer nothing until asked, except where marked.
 
 - Products: Pale Ale, Stout, IPA. ("three core beers")
@@ -69,9 +76,23 @@ Answer from this; volunteer nothing until asked, except where marked.
 
 Fill during/after runs. One entry per gate or event.
 
+Entries for run 1 (2026-09-15) were reconstructed afterwards from
+`stages/*/output/`, `../example-blocked.md`, and `../icm-exp.org`, not
+logged live. Time budgets and token counts were not recorded.
+
 | Run | Gate/event | What happened | Prediction hit? | Note |
 |---|---|---|---|---|
-| 1 | | | | |
+| 1 | Stage 1, whole | 18 questions, one checkpoint summary, corrections absorbed. Schema chosen: flow shop. Several questions (Q13 leak-test treatment, Q14 changeover by station, Q16–17 shift calendar, lot scaling) had no schema field. | P1 yes; P2 yes (both schemas loaded) | Depth came partly from agent judgment, not files. |
+| 1 | Stage 1 gate | Human did not edit `scr.md`; reaction was "where is the MiniZinc?" — the gate read as a stall, not a pause. | — | First data point: gate experienced as friction. |
+| 1 | `scr.md` content | 13 entries under `other constraints (verbatim, unmodeled)`: machining upstream, leak-test lag, packing lag, shift calendar, pause-across-night at three stations, no-span at run test, 2nd-shift staffing, overtime, retest risk, batching preference, dispatch-by-ship-date, lot sizing, WIP. 6 unknowns listed. | P3 yes (landing) | Objective mapped to total tardiness with two qualifications the canonical list can't hold (priority weights; changeover as strict tie-break). |
+| 1 | Stage 2, whole | Did not block. Decided every one of the 13 entries (covered / added as sentence / out of scope). Introduced a working-hour time axis and a quarter-hour unit (departing from `_config/domain.md`), lags with no resource, and explicit sequence-dependent setup (departing from `modeling-choices.md`). 15 action sentences, 8 open questions. | P3 yes (improvised, recorded) | Departures recorded in spec §0 and §6 rather than hidden. |
+| 1 | Stage 3, first attempt | Gate at step 1 fired: §6 Q1 (setup) is structural — decides whether AS-9 and AS-15 exist. Wrote `BLOCKED.md` naming stage 2 as the one to re-run, examined the other 7 entries and found them non-blocking, and critiqued the gate itself ("will fire on most honestly written specs"). | P4 yes (backward move, human must act) | Best artifact of the run; preserved as `../example-blocked.md`. |
+| 1 | Resolution | Human chose answer A and the resolution was written into `spec.md` §6 by hand ("RESOLVED by the human, 2026-09-15"). Stage 2 was **not** re-run. | P5 yes | Stage 2's audit never saw the change. |
+| 1 | Stage 3, second attempt | Wrote `model.mzn` (217 lines, 15 `AS-n` blocks), `data.dzn`, `trace.md`. Deleted `BLOCKED.md`. Two deliberate departures flagged (AS-11 narrowed; `disjunctive` redundant under AS-9). | — | Record of having been blocked survives only as prose in `trace.md` §0 and the hand-made copy. |
+| 1 | Verify (n−2) | 20 checks against `scr.md`; all pass. Flagged that the objective check passes only because `weight` is all 1 (spec §6 Q3 open) and that the plan serves the escalated lot worst. | P6 half: no mismatch, but a spec-vs-expert gap caught | "The model is doing exactly what the specification says; the specification is not yet doing what the expert said." |
+| 1 | Solve | Gecode: no solution at 30 s or 120 s. Agent reported it and ran Chuffed via `MZN_SOLVER`; optimal in <60 s. Total tardiness 65 wh; nothing on time; L1 infeasible by construction (47 wh path vs 42 wh available); L3 (escalated) 39.5 h late, L6 (filler) 1.5 h; batching worked (R134a lots on one stand, 4.75 h total changeover). | — | The infeasible promise is a finding for the expert; ICM has no path to take it back. Agent judgment overrode the Gecode convention, correctly. |
+| 1 | Context size | Not measured. By file size, stage 3 loaded ~10k tokens. | P7 yes (approx.) | |
+| 1 | Second run (Layer-3 change) | Not performed. | P8 untested | |
 
 ## 5. Questions to answer at the end of the day
 
