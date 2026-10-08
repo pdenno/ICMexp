@@ -4,9 +4,9 @@ This repository holds a small experiment we performed to understand the Interpre
 We develop, as faithfully as we could, a task of the kind our Sched6 system performs: eliciting a manufacturer's scheduling problem and producing a
 MiniZinc model of it — and watched where the folder-as-plan architecture helped and where it presented difficulties.
 
-- The analysis of this experiment is this READM.md.
-- The workspace is in `sched-mini/`; the run artifacts are in its `stages/\*/output/` folders.
-- The experiment protocol and its observation log are in `sched-mini/STRESS-TEST.md`.
+ - The analysis of this experiment is this README.md.
+ - The workspace is in `sched-mini/`; the run artifacts are in its `stages/\*/output/` folders.
+ - The experiment protocol and its observation log are in `sched-mini/STRESS-TEST.md`.
 
 
 The analysis has three parts:
@@ -19,7 +19,7 @@ The short version of our analysis is this: ICM is probably a good solution to se
 It replaces a framework with a folder, and that is a real contribution, particularly for people who are not programmers.
 For problem solving, where the next step depends on what was just learned, where a claim made in conversation may need to be tested with a tool,
 and where verification and traceability are part of the method rather than an afterthought, ICM has no place to put the things that matter.
-The experiment shows both the strengths and the weaknesses.
+The experiment shows both the strengths and the weaknesses of ICM.
 
 - - -
 ## 1\. What ICM is
@@ -35,11 +35,12 @@ Their slogan is that the folder structure replaces the framework, and they trace
 Parnas's information hiding, literate programming, and multi-pass compilation.
 
 **Architecture.** A workspace is a folder with a five-layer context hierarchy.
-- Layer 0 (`CLAUDE.md`, ~800 tokens) is workspace identity: *where am I?*
-- Layer 1 (a root `CONTEXT.md`, ~300 tokens) is task routing: *where do I go?*
-- Layer 2 (each stage's `CONTEXT.md`, 200–500 tokens) is the stage contract, with Inputs, Process and Outputs sections: *what do I do?*
-- Layer 3 is reference material — voice guides, conventions, domain knowledge — stable across runs, which they call "the factory."
-- Layer 4 is working artifacts — the previous stage's output, the user's source material — which change every run, "the product."
+
+ * Layer 0 (`CLAUDE.md`, ~800 tokens) is workspace identity: *where am I?*
+ * Layer 1 (a root `CONTEXT.md`, ~300 tokens) is task routing: *where do I go?*
+ * Layer 2 (each stage's `CONTEXT.md`, 200–500 tokens) is the stage contract, with Inputs, Process and Outputs sections: *what do I do?*
+ * Layer 3 is reference material — voice guides, conventions, domain knowledge — stable across runs, which they call "the factory."
+ * Layer 4 is working artifacts — the previous stage's output, the user's source material — which change every run, "the product."
 
 The Inputs table in each Layer-2 contract names exactly which Layer-3 and Layer-4 files (and which sections of them) the stage loads;
 the authors call this the control point of the system, because it makes context scoping explicit, editable and auditable.
@@ -47,6 +48,7 @@ They report 2,000–8,000 tokens of context per stage against ~42,000 for a mono
 to argue that scoping prevents rather than compresses irrelevant context.
 
 **Design principles.**
+
 - One stage, one job.
 - Plain text as the interface (markdown and JSON only).
 - Layered context loading.
@@ -174,7 +176,7 @@ ICM says "the coordination logic lives in the filesystem, not in application cod
 That is a fair criticism of LangGraph.
 It is not a criticism of Sched6, where the coordination logic does not live in application code either;
 it is entailed by the MCP orchestrator's guide.
-So the real axis is not *where the plan lives* but *what shape the plan has*, and that turns out to be a spectrum.
+But the real axis is not *where the plan lives* but *what shape the plan has*, and that turns out to be a spectrum.
 
 In **ICM** the plan is a total order written as folder numbers.
 It is fully known before the run.
@@ -196,13 +198,12 @@ The operators are not known in advance because the interviewee's situation is no
 the goal condition is not known because, as the rehearsals show, the interviewee's judgment of "done" moves.
 What Sched6 has instead of a domain is a goal, a body of beliefs about how to pursue it, and an orchestrator that is Claude, so that the next
 step is justified by evidence and principles rather than by state predicates.
-The absence of pre- and post-conditions is not a gap to apologize for:
-it is what lets the system be helpful in ways nobody enumerated.
+The absence of pre- and post-conditions is intentional; it is what lets the system be helpful in ways nobody enumerated.
 The price is that nothing guarantees soundness, and the substitutes for that guarantee are methodical:
 SASTs (like Zave and Jackson's action predicates) for traceability,
 ASCR completion tests for gating,
 small increments for pacing, rehearsals for validation.
-(The discussion that produced this README is a small illustration of the same behavior:
+(Footnote: The discussion that produced this README is a small illustration of the same behavior:
 it set out to characterize ICM, took a long detour into domain-specific languages for a different problem, and came back, and the detour was useful.
 A planner would not have taken it; a folder could not have.)
 
@@ -212,18 +213,16 @@ The moment a task needs what Sched6 needs, ICM says to stop using ICM. We agree.
 
 ### 3.3 What the experiment showed
 
-`sched-mini/` is a three-stage ICM workspace: `01-interview` elicits a
-scheduling problem from an expert using one of two Discovery Schemas (flow shop
-or job shop); `02-specify` turns the SCR into a specification whose §3 is a list
-of numbered *action sentences*, each citing the SCR field it comes from; `
-03-model` writes MiniZinc with an `% AS-n` comment per sentence, a trace table,
-and a verification step that checks the model back against the stage-1 SCR (the
-paper's *n−2* Verify idea). The run used a surrogate expert for a
-refrigerator-compressor plant, drawn from an earlier Sched6 project, with the
-human relaying the surrogate's answers. `STRESS-TEST.md` holds eight predictions
-made before the run and the observation log; the table below is the summary.
-Everything in it is reconstructed from the files in `stages/\*/output/`, `
-example-blocked.md`, and `icm-exp.org`.
+`sched-mini/` is a three-stage ICM workspace:
+
+ - `01-interview` elicits a scheduling problem from an expert using one of two Discovery Schemas (flow shop or job shop);
+ - `02-specify` turns the SCR into a specification whose §3 is a list of numbered *action sentences*, each citing the SCR field it comes from;
+ - `03-model` writes MiniZinc with an `% AS-n` comment per sentence, a trace table, and a verification step that checks the model back against
+ the stage-1 SCR (the paper's *n−2* Verify idea).
+
+The run used a surrogate expert for a refrigerator-compressor plant, drawn from an earlier Sched6 project, with the human relaying the surrogate's answers.
+`STRESS-TEST.md` holds eight predictions made before the run and the observation log; the table below is the summary.
+Everything in it is reconstructed from the files in `stages/\*/output/`, `example-blocked.md`, and `icm-exp.org`.
 
 
 |\#|Prediction                                                                                                                                 |What happened                                                                                                                                                                                                                                                                                                                                                                                                                   |
